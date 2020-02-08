@@ -1,0 +1,34 @@
+# Config file for automatic testing at travis-ci.org
+
+language: python
+dist: xenial
+python:
+  - 3.7
+# stages run sequentially. (this section says what order the stages
+# should be run in.)
+stages:
+  - test
+  - name: answers
+    if: branch = master  # only runs the "answers" stage if the branch is master.
+
+
+jobs:
+  include:
+
+    # First stage.
+    - stage: test
+      install:
+        - pipenv install --dev --ignore-pipfile --deploy
+      before_script: # code coverage tool
+         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+         - chmod +x ./cc-test-reporter
+         - ./cc-test-reporter before-build
+      script: pytest --cov-report xml --cov-report term
+      after_script:
+        - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+
+    #  Second stage runs after the first one.
+    - stage: answers
+      script:
+        - python fibonacci.py
+        - python pyramid.py

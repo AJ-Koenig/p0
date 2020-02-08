@@ -1,0 +1,9 @@
+*.py[co]
+.idea
+.vscode
+
+coverage.xml
+.coverage
+htmlcov
+# Project exclude paths
+/venv/
